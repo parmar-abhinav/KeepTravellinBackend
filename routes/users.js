@@ -9,6 +9,7 @@ const mongoose = require('mongoose');
 var passport = require('passport');
 var authenticate = require('../authenticate');
 
+
 var uri = config.uriFirst + config.dbname + config.uriLast
 const connect = mongoose.connect(uri);
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -19,16 +20,18 @@ router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
 
-router.post('/signup', (req, res, next) => {
-  User.register(new User({username: req.body.username}), 
-    req.body.password, (err, user) => {
+router.post('/signup',(req, res, next) => {
+  User.register(new User({username: req.body.username, firstname: req.body.firstname, lastname: req.body.lastname, email: req.body.email, usertype: req.body.usertype, mobnumber: req.body.mobnumber}), 
+  req.body.password, (err, user) => {
     if(err) {
+      client.close();
       res.statusCode = 500;
       res.setHeader('Content-Type', 'application/json');
       res.json({err: err});
     }
     else {
       passport.authenticate('local')(req, res, () => {
+        client.close();
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
         res.json({success: true, status: 'Registration Successful!'});
@@ -40,24 +43,10 @@ router.post('/signup', (req, res, next) => {
 router.post('/login', passport.authenticate('local'), (req, res) => {
 
   var token = authenticate.getToken({_id: req.user._id});
+  client.close();
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');
-  res.json({success: true, token: token, status: 'You are successfully logged in!'});
-});
-
-router.get('/logout', (req, res) => {
-  if (req.session) {
-    req.session.destroy();
-    res.clearCookie('session-id');
-    res.end();
-    client.close();
-  }
-  else {
-    var err = new Error('You are not logged in!');
-    err.status = 403;
-    client.close();
-    next(err);
-  }
+  res.json({success: true, token: token, usertype: res.req.user.usertype, status: 'You are successfully logged in!'});
 });
 
 module.exports = router;

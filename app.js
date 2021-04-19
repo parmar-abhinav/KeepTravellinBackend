@@ -7,6 +7,7 @@ var logger = require('morgan');
 var config = require('./config');
 var passport = require('passport');
 var authenticate = require('./authenticate');
+var cors = require('cors')
 
 var session = require('express-session');
 var MongoDBStore = require('connect-mongodb-session')(session);
@@ -16,9 +17,17 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var profileRouter = require('./routes/profileRouter');
+var storiesRouter = require('./routes/stories')
+var destinationRouter = require('./routes/destination');
+var servicesRouter = require('./routes/services');
+var tripRouter = require('./routes/trip');
+var requestRouter = require('./routes/request');
+var userRouter = require('./routes/checkusers');
+var wishRouter = require('./routes/wishes');
 
 var app = express();
-
+app.use(cors());
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -34,6 +43,14 @@ app.use(passport.initialize());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/profile', profileRouter);
+app.use('/stories', storiesRouter);
+app.use('/destination', destinationRouter);
+app.use('/services', servicesRouter);
+app.use('/trip', tripRouter);
+app.use('/request', requestRouter);
+app.use('/checkusers', userRouter);
+app.use('/wish', wishRouter);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
