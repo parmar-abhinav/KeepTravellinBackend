@@ -17,7 +17,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 client.connect(err => {
 });
 
-tripRouter.get('/', passport.authenticate('local'),async (req, res) => {
+tripRouter.get('/',authenticate.verifyUser, async (req, res) => {
   Services.find((err, story) => {
     if(err) {
       client.close();

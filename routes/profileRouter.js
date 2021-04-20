@@ -15,7 +15,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 client.connect(err => {
 });
 
-profileRouter.get('/:username', passport.authenticate('local'),(req, res) => {
+profileRouter.get('/:username',authenticate.verifyUser, (req, res) => {
   console.log(req.params.username)
   User.findOne({ username: req.params.username }, (err, user) => {
     if (err) {
@@ -42,7 +42,7 @@ profileRouter.get('/:username', passport.authenticate('local'),(req, res) => {
   });
 });
 
-profileRouter.post('/', passport.authenticate('local'),(req, res) => {
+profileRouter.post('/', authenticate.verifyUser,(req, res) => {
   console.log(req.body);
   User.updateOne({ username: req.body.username }, { $set: { firstname: req.body.firstname, lastname: req.body.lastname, email: req.body.email } }, (err, user) => {
     if (err) {
