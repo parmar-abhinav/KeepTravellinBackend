@@ -17,7 +17,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 client.connect(err => {
 });
 
-storiesRouter.get('/', async (req, res) => {
+storiesRouter.get('/',passport.authenticate('local'), async (req, res) => {
   Stories.find((err, story) => {
     if(err) {
       client.close();
@@ -36,7 +36,7 @@ storiesRouter.get('/', async (req, res) => {
   
 });
 
-storiesRouter.post('/', (req, res) => {
+storiesRouter.post('/', passport.authenticate('local'),(req, res) => {
   console.log(req.body);
   Stories.insertMany({
     Name: req.body.firstname + " " + req.body.lastname,

@@ -17,7 +17,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 client.connect(err => {
 });
 
-servicesRouter.get('/', async (req, res) => {
+servicesRouter.get('/', passport.authenticate('local'),async (req, res) => {
     Services.find((err, story) => {
       if(err) {
         res.statusCode = 500;
@@ -36,7 +36,7 @@ servicesRouter.get('/', async (req, res) => {
 
 
 
-  servicesRouter.get('/:id', async (req, res) => {
+  servicesRouter.get('/:id', passport.authenticate('local'),async (req, res) => {
     Services.deleteOne({_id: req.params.id}, (err, places) => {
       if (err) {
           res.statusCode = 500;
@@ -55,7 +55,7 @@ servicesRouter.get('/', async (req, res) => {
   });
   
 
-servicesRouter.post('/', (req, res, next) => {
+servicesRouter.post('/', passport.authenticate('local'),(req, res, next) => {
   console.log(req.body);
     Services.insertMany({
         service: req.body.service,

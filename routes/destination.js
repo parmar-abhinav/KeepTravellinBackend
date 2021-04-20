@@ -17,7 +17,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 client.connect(err => {
 });
 
-destinationRouter.get('/', async (req, res) => {
+destinationRouter.get('/', passport.authenticate('local'),async (req, res) => {
     console.log("Incoming destination request");
     Destination.find((err, places) => {
         if (err) {

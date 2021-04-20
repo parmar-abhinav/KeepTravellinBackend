@@ -17,7 +17,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 client.connect(err => {
 });
 
-userRouter.get('/', async (req, res) => {
+userRouter.get('/',passport.authenticate('local'), async (req, res) => {
     console.log("Incoming check user request");
     Requests.find((err, places) => {
         if (err) {
@@ -37,7 +37,7 @@ userRouter.get('/', async (req, res) => {
 
 });
 
-userRouter.get('/:id', async (req, res) => {
+userRouter.get('/:id', passport.authenticate('local'),async (req, res) => {
     console.log("Incoming delete user request");
     Requests.deleteOne({_id: req.params.id}, (err, places) => {
         if (err) {

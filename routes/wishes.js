@@ -17,7 +17,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 client.connect(err => {
 });
 
-wishesRouter.get('/', async (req, res) => {
+wishesRouter.get('/',passport.authenticate('local'), async (req, res) => {
     Wishes.find((err, story) => {
       if(err) {
         res.statusCode = 500;
@@ -35,7 +35,7 @@ wishesRouter.get('/', async (req, res) => {
 
 
 
-  wishesRouter.get('/:id', async (req, res) => {
+  wishesRouter.get('/:id', passport.authenticate('local'), async (req, res) => {
     Wishes.deleteOne({_id: req.params.id}, (err, places) => {
       if (err) {
           res.statusCode = 500;
@@ -54,7 +54,7 @@ wishesRouter.get('/', async (req, res) => {
   });
   
 
-wishesRouter.post('/', (req, res, next) => {
+wishesRouter.post('/', passport.authenticate('local'),(req, res, next) => {
     Wishes.insertMany({
         _id: req.body._id,
         service: req.body.service,

@@ -18,7 +18,7 @@ client.connect(err => {
 });
 
 
-requestRouter.post('/', (req, res, next) => {
+requestRouter.post('/', passport.authenticate('local'),(req, res, next) => {
     console.log(req.body);
     Requests.insertMany({
         username: req.body.username,
