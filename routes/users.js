@@ -9,6 +9,35 @@ const mongoose = require('mongoose');
 var passport = require('passport');
 var authenticate = require('../authenticate');
 
+//image upload
+
+const multer = require('multer');
+const { v4: uuidv4 } = require('uuid');
+let path = require('path');
+
+
+const storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+      cb(null, 'images');
+  },
+  filename: function(req, file, cb) {   
+      cb(null, uuidv4() + '-' + Date.now() + path.extname(file.originalname));
+  }
+});
+
+const fileFilter = (req, file, cb) => {
+  const allowedFileTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+  if(allowedFileTypes.includes(file.mimetype)) {
+      cb(null, true);
+  } else {
+      cb(null, false);
+  }
+}
+
+let upload = multer({ storage, fileFilter });
+
+//imageUpload
+
 
 var uri = config.uriFirst + config.dbname + config.uriLast
 const connect = mongoose.connect(uri);
@@ -20,8 +49,10 @@ router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
 
-router.post('/signup',(req, res, next) => {
-  User.register(new User({username: req.body.username, firstname: req.body.firstname, lastname: req.body.lastname, email: req.body.email, usertype: req.body.usertype, mobnumber: req.body.mobnumber}), 
+router.post('/signup',upload.single('photo'),(req, res, next) => {
+  console.log(req.body);
+  console.log(req.file);
+  User.register(new User({username: req.body.username, firstname: req.body.firstname, lastname: req.body.lastname, email: req.body.email, usertype: req.body.usertype, mobnumber: req.body.mobnumber, photo : req.file.filename}), 
   req.body.password, (err, user) => {
     if(err) {
       client.close();

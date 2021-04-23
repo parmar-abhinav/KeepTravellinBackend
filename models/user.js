@@ -25,6 +25,9 @@ var User = new Schema({
     mobnumber: {
         type: String,
         default: ''
+    },
+    photo: {
+        type: String
     }
 });
 
